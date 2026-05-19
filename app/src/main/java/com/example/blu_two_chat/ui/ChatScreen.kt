@@ -1,4 +1,4 @@
-package com.example.blu_two_chat.ui.theme
+package com.example.blu_two_chat.ui
 
 
 import androidx.compose.foundation.layout.*
