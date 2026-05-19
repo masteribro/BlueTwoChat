@@ -1,19 +1,30 @@
 package com.example.blu_two_chat.viewmodel
 
+
 import androidx.lifecycle.ViewModel
+import com.example.blu_two_chat.bluetooth.BluetoothController
 import com.example.blu_two_chat.model.BluetoothDeviceModel
-import com.example.blu_two_chat.model.ConnectionState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
-class ChatViewModel : ViewModel() {
+class ChatViewModel(private val controller: BluetoothController) : ViewModel() {
 
-    val pairedDevices: StateFlow<List<BluetoothDeviceModel>> = MutableStateFlow(emptyList())
-    val scannedDevices: StateFlow<List<BluetoothDeviceModel>> = MutableStateFlow(emptyList())
-    val connectionState: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.Disconnected)
+    val scannedDevices = controller.scannedDevices
+    val pairedDevices = controller.pairedDevices
+    val connectionState = controller.connectionState
+    val messages = controller.messages
 
-    fun startScan() {}
-    fun stopScan() {}
-    fun startServer() {}
-    fun connectToDevice(device: BluetoothDeviceModel) {}
+    fun startScan() {
+        controller.updatePairedDevices()
+        controller.startDiscovery()
+    }
+
+    fun stopScan() = controller.stopDiscovery()
+    fun startServer() = controller.startBluetoothServer()
+    fun connectToDevice(d: BluetoothDeviceModel) = controller.connectToDevice(d)
+    fun sendMessage(text: String) = controller.sendMessage(text)
+    fun disconnect() = controller.closeConnection()
+
+    override fun onCleared() {
+        super.onCleared()
+        controller.release()
+    }
 }

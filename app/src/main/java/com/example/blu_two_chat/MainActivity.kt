@@ -1,5 +1,6 @@
 package com.example.blu_two_chat
 
+
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -13,13 +14,27 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.blu_two_chat.bluetooth.BluetoothController
+import com.example.blu_two_chat.model.ConnectionState
 import com.example.blu_two_chat.ui.ChatScreen
+import com.example.blu_two_chat.ui.DeviceListScreen
 import com.example.blu_two_chat.viewmodel.ChatViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: ChatViewModel by viewModels()
+    private val viewModel by viewModels<ChatViewModel> {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                ChatViewModel(BluetoothController(applicationContext)) as T
+        }
+    }
 
     private val enableBtLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {  }
@@ -43,7 +58,7 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background) {
-                    ChatScreen(viewModel)
+                    MainScreen(viewModel)
                 }
             }
         }
@@ -64,7 +79,13 @@ class MainActivity : ComponentActivity() {
             enableBtLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
-
 }
 
-
+@Composable
+fun MainScreen(viewModel: ChatViewModel) {
+    val state by viewModel.connectionState.collectAsState()
+    when (state) {
+        is ConnectionState.Connected -> ChatScreen(viewModel)
+        else                         -> DeviceListScreen(viewModel)
+    }
+}

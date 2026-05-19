@@ -21,16 +21,16 @@ import com.example.blu_two_chat.viewmodel.ChatViewModel
 @Composable
 fun DeviceListScreen(viewModel: ChatViewModel) {
 
-    val paired  by viewModel.pairedDevices.collectAsState()
+    val paired by viewModel.pairedDevices.collectAsState()
     val scanned by viewModel.scannedDevices.collectAsState()
-    val state   by viewModel.connectionState.collectAsState()
+    val state by viewModel.connectionState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly) {
-            Button(onClick = { viewModel.startScan() })   { Text("Scan") }
-            Button(onClick = { viewModel.stopScan() })    { Text("Stop") }
+            Button(onClick = { viewModel.startScan() }) { Text("Scan") }
+            Button(onClick = { viewModel.stopScan() }) { Text("Stop") }
             Button(onClick = { viewModel.startServer() }) { Text("Host") }
         }
 
