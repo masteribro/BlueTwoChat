@@ -14,18 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.blu_two_chat.ui.theme.ChatScreen
+import com.example.blu_two_chat.ui.ChatScreen
 import com.example.blu_two_chat.viewmodel.ChatViewModel
-
 
 class MainActivity : ComponentActivity() {
 
     private val viewModel: ChatViewModel by viewModels()
 
-
-
     private val enableBtLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { /* result ignored */ }
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {  }
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { perms ->
@@ -46,7 +43,6 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background) {
-
                     ChatScreen(viewModel)
                 }
             }
@@ -68,4 +64,7 @@ class MainActivity : ComponentActivity() {
             enableBtLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
+
 }
+
+
