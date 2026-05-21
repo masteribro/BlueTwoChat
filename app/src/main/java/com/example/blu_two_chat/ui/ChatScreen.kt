@@ -3,6 +3,7 @@ package com.example.blu_two_chat.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,21 +15,38 @@ import androidx.compose.ui.unit.dp
 import com.example.blu_two_chat.model.ChatMessage
 import com.example.blu_two_chat.viewmodel.ChatViewModel
 
-
 @Composable
 fun ChatScreen(viewModel: ChatViewModel) {
 
+    val messages by viewModel.messages.collectAsState()
     var input by remember { mutableStateOf("") }
+    var isWaiting by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.size - 1)
+            isWaiting = messages.last().isMine
+        }
+    }
 
-
-    Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 48.dp, start = 8.dp, end = 8.dp, bottom = 8.dp)) {
 
         Text("Connected", modifier = Modifier.padding(8.dp))
 
         LazyColumn(state = listState,
             modifier = Modifier.weight(1f).fillMaxWidth()) {
+            items(messages) { MessageBubble(it) }
+            if (isWaiting) {
+                item {
+                    Box(modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        contentAlignment = Alignment.CenterStart) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                    }
+                }
+            }
         }
 
         Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -40,11 +58,15 @@ fun ChatScreen(viewModel: ChatViewModel) {
                 placeholder = { Text("Type a message…") }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                if (input.isNotBlank()) {
-                    input = ""
-                }
-            }) { Text("Send") }
+            Button(
+                onClick = {
+                    if (input.isNotBlank() && !isWaiting) {
+                        viewModel.sendMessage(input)
+                        input = ""
+                    }
+                },
+                enabled = !isWaiting
+            ) { Text("Send") }
         }
     }
 }
