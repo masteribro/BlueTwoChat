@@ -20,13 +20,11 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
     val messages by viewModel.messages.collectAsState()
     var input by remember { mutableStateOf("") }
-    var isWaiting by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
-            isWaiting = messages.last().isMine
         }
     }
 
@@ -39,14 +37,6 @@ fun ChatScreen(viewModel: ChatViewModel) {
         LazyColumn(state = listState,
             modifier = Modifier.weight(1f).fillMaxWidth()) {
             items(messages) { MessageBubble(it) }
-            if (isWaiting) {
-                item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(8.dp),
-                        contentAlignment = Alignment.CenterStart) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                    }
-                }
-            }
         }
 
         Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
@@ -60,12 +50,11 @@ fun ChatScreen(viewModel: ChatViewModel) {
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = {
-                    if (input.isNotBlank() && !isWaiting) {
+                    if (input.isNotBlank()) {
                         viewModel.sendMessage(input)
                         input = ""
                     }
-                },
-                enabled = !isWaiting
+                }
             ) { Text("Send") }
         }
     }
