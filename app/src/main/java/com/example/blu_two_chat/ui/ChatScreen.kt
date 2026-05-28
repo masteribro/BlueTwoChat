@@ -30,7 +30,8 @@ fun ChatScreen(viewModel: ChatViewModel) {
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(top = 48.dp, start = 8.dp, end = 8.dp, bottom = 8.dp)) {
+        .statusBarsPadding()
+        .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)) {
 
         Text("Connected", modifier = Modifier.padding(8.dp))
 

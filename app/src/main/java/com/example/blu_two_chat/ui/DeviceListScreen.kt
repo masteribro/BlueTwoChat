@@ -25,12 +25,11 @@ fun DeviceListScreen(viewModel: ChatViewModel) {
     val scanned by viewModel.scannedDevices.collectAsState()
     val state by viewModel.connectionState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(top = 48.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
 
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly) {
             Button(onClick = { viewModel.startScan() }) { Text("Scan") }
-            Button(onClick = { viewModel.stopScan() }) { Text("Stop") }
             Button(onClick = { viewModel.startServer() }) { Text("Host") }
         }
 
